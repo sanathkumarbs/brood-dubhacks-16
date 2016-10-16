@@ -12,7 +12,7 @@ class Tweets(object):
         alltweets = []
 
         # make initial request for most recent tweets (200 is the maximum allowed count)
-        new_tweets = api.user_timeline(screen_name=screenName, count=3)
+        new_tweets = api.user_timeline(screen_name=screenName, count=100)
         #print("the first tweet")
         #print (new_tweets)
 
@@ -40,7 +40,7 @@ class Tweets(object):
             #print("...%s tweets downloaded so far" % (len(alltweets)))
 
         # transform the tweepy tweets into a 2D array that will populate the csv
-        outtweets = [[ tweet.text.split('http')[0]] for tweet in alltweets]
+        outtweets = [ tweet.text.split('http')[0] for tweet in alltweets]
         """
         for x in outtweets:
             print("normal")

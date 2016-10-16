@@ -16,9 +16,10 @@ class Main(object):
         user = User(authinfo)
         tweets = Tweets()
         UserTweets = tweets.GetTweets(ScreenName,user)
-        FinalTweets = {}
-        FinalTweets[ScreenName] = UserTweets
-        return FinalTweets
+        #FinalTweets = {}
+        #FinalTweets[ScreenName] = UserTweets
+        #print(UserTweets)
+        return UserTweets
 
 
 
@@ -29,7 +30,7 @@ def main(ScreenName):
     tweets = The_main.CreateTweets(ScreenName)
     newAnalyzer = Analyzer(ScreenName,tweets)
     newAnalyzer.Analyze()
-    print(tweets)
+    #print(tweets)
 
 if len(sys.argv) > 1:
     screen_name = sys.argv[1]
