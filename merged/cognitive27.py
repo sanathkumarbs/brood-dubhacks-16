@@ -164,7 +164,7 @@ class Analyzer(object):
         Returns:
             TYPE: Description
         """
-        
+        call_me(self.username)
 
     def update_firebase(self, tags):
         """Summary
