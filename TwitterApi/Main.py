@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import sys
 from AuthInfo import AuthInfo
 from User import User
