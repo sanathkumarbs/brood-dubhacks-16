@@ -225,7 +225,6 @@ def call_me(usern):
 
 	dashboard_page = 'frontend.html'
 
-	print 'Opening dashboard...'
 	url = 'file://'+os.getcwd()+'/'+dashboard_page
 	# Open URL in a new tab, if a browser window is already open.
 	webbrowser.open_new_tab(url)
