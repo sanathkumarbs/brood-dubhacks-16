@@ -2,7 +2,7 @@
 """Summary.
 
 Attributes:
-    cachedStopWords (TYPE): Description
+    cachedStopWords (list): caching StopWords from nltk library for cleaning
 """
 
 import httplib
@@ -11,33 +11,34 @@ import base64
 import json
 from nltk.corpus import stopwords
 from firebase import firebase
+from brood import call_me
 
 cachedStopWords = stopwords.words("english")
 cachedStopWords.append('RT')
 
 
 class Cognitive(object):
-    """Summary
+    """Methods related to Microsoft Cognitive Services - Text Analytics API.
 
     Attributes:
-        body (TYPE): Description
-        key (str): Description
+        body (TYPE): http request body
+        key (str): key
     """
 
     def __init__(self, body):
-        """Summary
+        """Initialization.
 
         Args:
-            body (TYPE): Description
+            body (TYPE): http request body
         """
         self.key = "2d81347e6bf6407abaf197986385cf1e"
         self.body = body
 
     def get_keyphrases(self):
-        """Summary
+        """Getting all tags.
 
         Returns:
-            TYPE: Description
+            Returns all tags
         """
         headers = {
             # Request headers
@@ -66,41 +67,41 @@ class Cognitive(object):
 
 
 class Fire(object):
-    """docstring for Fire
+    """Methods for Firebase.
 
     Attributes:
-        firebase (TYPE): Description
-        username (TYPE): Description
+        firebase: Instance of the firebase object
+        username: Twitter Username to be analyzed
     """
 
     def __init__(self, username):
-        """Summary
+        """Initialization.
 
         Args:
-            username (TYPE): Description
+            username (string): Twitter Username to be analyzed
         """
         self.username = username
         self.firebase = firebase.FirebaseApplication(
             'https://brood-dubhacks-16.firebaseio.com/', None)
 
     def get_userid(self):
-        """Summary
+        """Get userid for the given Twitter Handle.
 
         Returns:
-            TYPE: Description
+            result: firebase json result
         """
         print("/twitter/" + self.username)
         result = self.firebase.get('/twitter/' + self.username, None)
         return result
 
     def get_tags(self, user):
-        """Summary
+        """Get tags analyzed for the given Twitter handle/user.
 
         Args:
             user (TYPE): Description
 
         Returns:
-            TYPE: Description
+            result: firebase json result
         """
         result = self.firebase.get("/tags/" + user + "/", None)
         for key in result.keys():
@@ -108,21 +109,21 @@ class Fire(object):
         return tag
 
     def post_tags(self, user, tag):
-        """Summary
+        """Post tags of an user to Firebase.
 
         Args:
-            user (TYPE): Description
-            tag (TYPE): Description
+            user (str): Twitter Username
+            tag (str): Analyzed Tags for user
 
         Returns:
-            TYPE: Description
+            result: firebase json result
         """
         result = self.firebase.post("/tags/" + user + "/", tag)
         return result
 
 
 class Analyzer(object):
-    """Summary
+    """Analyzing Engine for Tweets.
 
     Attributes:
         body_items (list): Description
@@ -132,11 +133,11 @@ class Analyzer(object):
     """
 
     def __init__(self, username, tweets):
-        """Summary
+        """Initialization.
 
         Args:
-            username (TYPE): Description
-            tweets (TYPE): Description
+            username (str): Twitter Username
+            tweets (str): Tweets Analyzed
         """
         self.key = "2d81347e6bf6407abaf197986385cf1e"
         self.body_items = []
@@ -144,7 +145,7 @@ class Analyzer(object):
         self.username = username
 
     def Analyze(self):
-        """Summary
+        """Analyzing Tweets.
 
         Returns:
             TYPE: Description
@@ -158,8 +159,8 @@ class Analyzer(object):
 
         self.update_firebase(keyphrases)
 
-    def exec_recommender():
-        """Summary
+    def exec_recommender(self):
+        """Execute Recommender Engine.
 
         Returns:
             TYPE: Description
@@ -167,10 +168,10 @@ class Analyzer(object):
         call_me(self.username)
 
     def update_firebase(self, tags):
-        """Summary
+        """Update Firebase with new analysis.
 
         Args:
-            tags (TYPE): Description
+            tags (string): string
 
         Returns:
             TYPE: Description
@@ -186,10 +187,10 @@ class Analyzer(object):
         print(fire.get_tags(userid))
 
     def build_body(self):
-        """Summary
+        """Building body for http request.
 
         Returns:
-            TYPE: Description
+            body: Body for the http request
         """
         self.add_items_to_documents()
         body = json.dumps({
@@ -199,26 +200,28 @@ class Analyzer(object):
         return body
 
     def add_items_to_documents(self):
-        """Summary
+        """Adding items to the documents of the body.
 
         Returns:
-            TYPE: Description
+            body_items: Each unique document is created per tweet
         """
         if(len(self.tweets) > 1):
             # print (self.tweets)
             for idee in range(len(self.tweets)):
                 if(len(self.tweets[idee]) > 0):
-                    docIdee = {
+                    docidee = {
                         "language": "en",
                         "id": idee,
                         "text": self.tweets[idee]}
-                    self.body_items.append(docIdee)
+                    self.body_items.append(docidee)
 
 if __name__ == "__main__":
-    tweets = ["650+ hackers all set to hack all night!  Tonight's gonna be a good night ;-) #dubhacks16 @DubHacks @MLHacks",
-              "@vidsrinivasan How to integrate inclusive design into ideation. Our DubHacks keynote speaker, Vidya Srinivasan.",
+    tweets = ["650+ hackers all set to hack all night! Tonight's",
+              "gonna be a good night ;-) #dubhacks16 @DubHacks @MLHacks",
+              "@vidsrinivasan How to integrate inclusive design into ideation"
+              "Our DubHacks keynote speaker, Vidya Srinivasan.",
               "So true! Thanks for the great keynote @vidsrinivasan!",
-              "These are not hotwheels. Ballers from my hometown doing their thing!"
+              "These aren't hotwheels. Ballers from my town doing their thing!"
               ]
 
     analyzer = Analyzer('SanathKumarBS', tweets)
