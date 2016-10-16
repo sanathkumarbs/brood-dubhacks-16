@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <style>
+        
+        .hidden{
+            display:none;
+        }
+    
+    .unhidden{
+        display:block;
+    }
+        body {
+            font: 14px sans-serif;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            margin: auto;
+            position: relative;
+            width: 1160px;
+            height: 100%
+        }
+    
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+    }
+    
+    .bar {
+        fill: steelblue;
+    }
+    
+    .x.axis path {
+        display: none;
+    }
+
+    </style>
+    <body>
+
+        
+        <div id = "visualization" class = "unhidden">
+            <h1><center>User Dashboard</center></h1>
+            <button id = "btn2">Switch</button>
+        </div>
+    </body>
+
+        <script>
+  
+
+
+
+        var draw = function(data,i,x_axis_label){
+                var margin = {top: 20, right: 20, bottom: 50, left: 60},
+                width = 1260 - margin.left - margin.right,
+                height = 550 - margin.top - margin.bottom;
+                
+                var svg = d3.select("#visualization").append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                /*
+                var tooltip = svg.append("g")
+                .attr("class", "tooltip")
+                .style("display", "none");
+                */
+                var x = d3.scale.ordinal()
+                .rangeRoundBands([0, width], .1);
+                
+                var y = d3.scale.linear()
+                .rangeRound([height, 0]);
+                
+                
+                var color = d3.scale.category20();
+                
+                var xAxis = d3.svg.axis()
+                .scale(x)
+                .orient("bottom");
+                
+                var yAxis = d3.svg.axis()
+                .scale(y)
+                .orient("left")
+                .tickFormat(d3.format(".2s"));
+                
+                /*
+                var tip = d3.tip()
+                .attr('class', 'd3-tip')
+                .offset([-10, 0])
+                .html(function(d) {
+                      return "<strong>Affinity Score:</strong> <span style='color:red'>" + d.value + "</span>";
+                      })
+                      
+                svg.call(tip);
+                */
+                
+                var tooltip = d3.select("#visualization")
+                .append("div")
+                .style("position", "absolute")
+                .style("z-index", "10")
+                .style("font-color", "white")
+                .style("visibility", "hidden")
+                .style("background", "#000")
+                .text("a simple tooltip");
+                
+                
+                color.domain(d3.keys(data[0]).filter(function(key) { return key !== "user"; }));
+
+
+                
+                data.forEach(function(d) {
+                             d.user = d.user;
+                             d.value = +d.value;
+                             //console.log(d.user);
+                             
+                             //console.log(d.value);
+                             });
+                             data.sort(function(a, b) { return b.value - a.value; });
+
+                             x.domain(data.map(function(d) { return d.user; }));
+                             y.domain([0, d3.max(data, function(d) { return d.value; })]).nice();
+                             
+                             svg.append("g")
+                             .attr("class", "x axis")
+                             .attr("transform", "translate(0," + height + ")")
+                             .call(xAxis)
+                             .append("text")
+                             .attr("dx",500)
+                             .attr("dy",40)
+                             //.attr("x", 200)
+                             //.attr("y", -150)
+                             .style("text-anchor", "middle")
+                             .text(x_axis_label)
+                             .attr("font-size", "20px")
+                             
+                             ;
+                             
+                             svg.append("g")
+                             .attr("class", "y axis")
+                             .call(yAxis)
+                             .append("text")
+                             .attr("transform", "rotate(-90)")
+                             //.attr("y", -6)
+                             .attr("dx","-12em")
+                             .attr("dy", "-2.25em")
+                             //.style("text-anchor", "end")
+                             .text("Affinity")
+                             .attr("font-size", "20px")
+                            ;
+
+                             svg.selectAll("bar")
+                             .data(data)
+                             .enter().append("rect")
+                             .style("fill", "steelblue")
+                             .attr("x", function(d) { return x(d.user); })
+                             .attr("width", x.rangeBand())
+                             .attr("y", function(d) { return y(d.value); })
+                             .attr("height", function(d) { return height - y(d.value); })
+                             .style("fill", function(d) { return color(d.user); })
+ 
+                             
+                             ;
+                             
+                             
+                             
+                             $('#btn2').click(function() {
+                                              
+                                              if(i==0){
+                                              d3.csv("tag.csv", function(error, data_new) {
+                                                     d3.selectAll("svg").remove();
+                                                     
+                                                     if (error) throw error;
+                                                     draw(data_new,1,"Tags");
+                                                     
+                                                     });
+                                              }
+                                              else{
+                                              d3.csv("bro.csv", function(error, data_newer) {
+                                                     d3.selectAll("svg").remove();
+                                                     
+                                                     if (error) throw error;
+                                                     draw(data_newer,0,"Users");
+                                                     
+                                                     });
+                                                    }
+                                                });
+
+                   }
+        
+            </script>
+        
+        <script>d3.csv("bro.csv", function(error, data) {
+                                        if (error) throw error;
+                                        
+                                        else if(data.length==0){
+                                        alert("Error, please retry.");
+                                        location.reload();
+                                        }
+                                        else{
+                                        draw(data,0,"Users")
+                                        ;
+                     
+
+                                        $('#loader').hide();
+                                        $('#visualization').show();
+     
+                                               
+                                               
+                                               }
+                                        
+                                        });
+                                       
+                                       
+                                   
+                            
+                          
+        
+        
+        </script>
+
+
+
