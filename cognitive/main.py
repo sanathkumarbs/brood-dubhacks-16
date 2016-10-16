@@ -12,7 +12,7 @@ import urllib.error
 import base64
 import json
 from nltk.corpus import stopwords
-from firebase import firebase
+#from firebase import firebase
 
 cachedStopWords = stopwords.words("english")
 cachedStopWords.append('RT')
