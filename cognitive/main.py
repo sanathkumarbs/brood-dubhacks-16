@@ -72,7 +72,12 @@ class Analyzer(object):
         self.username = username
 
     def Analyze(self):
-        self.build_body()
+        body = self.build_body()
+        print(body)
+        cognitive = Cognitive(body)
+        keyphrases = cognitive.get_keyphrases()
+        keyphrases = ' '.join(keyphrases)
+        print(keyphrases)
 
     def build_body(self):
         self.add_items_to_documents()
@@ -105,12 +110,12 @@ if __name__ == "__main__":
               "So true! Thanks for the great keynote @vidsrinivasan!",
               "These are not hotwheels. Ballers from my hometown doing their thing!"]
 
-    analyzer = Analyzer(tweets)
-    body = analyzer.build_body()
+    analyzer = Analyzer('SanathKumarBS', tweets)
+    analyzer.build_body()
 
-    print(body)
+    # print(body)
 
-    cognitive = Cognitive(body)
-    keyphrases = cognitive.get_keyphrases()
-    keyphrases = ' '.join(keyphrases)
-    print(keyphrases)
+    # cognitive = Cognitive(body)
+    # keyphrases = cognitive.get_keyphrases()
+    # keyphrases = ' '.join(keyphrases)
+    # print(keyphrases)
