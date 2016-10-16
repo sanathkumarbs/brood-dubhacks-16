@@ -1,5 +1,6 @@
-user,1,2
-@Nelson_Sayz,@Rajat_Sethi3 (0.50),@RohanThakkar5 (0.48)
-@SanathKumarBS,@RohanThakkar5 (0.87),@Rajat_Sethi3 (0.54)
-@RohanThakkar5,@SanathKumarBS (0.87),@Nelson_Sayz (0.48)
-@Rajat_Sethi3,@SanathKumarBS (0.54),@Nelson_Sayz (0.50)
+user,value
+@BernieSanders,0.32
+@HillaryClinton,0.24
+@realDonaldTrump,0.22
+@mike_pence,0.18
+@SanathKumarBS,0.16
