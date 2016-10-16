@@ -74,6 +74,7 @@ class Analyzer(object):
     def Analyze(self):
         body = self.build_body()
         print(body)
+
         cognitive = Cognitive(body)
         keyphrases = cognitive.get_keyphrases()
         keyphrases = ' '.join(keyphrases)
@@ -104,6 +105,7 @@ class Analyzer(object):
         self.body_items.append(docIdee)
 
 if __name__ == "__main__":
+    print("in main")
 
     tweets = ["650+ hackers all set to hack all night!  Tonight's gonna be a good night ;-) #dubhacks16 @DubHacks @MLHacks",
               "@vidsrinivasan How to integrate inclusive design into ideation. Our DubHacks keynote speaker, Vidya Srinivasan.",
@@ -111,7 +113,7 @@ if __name__ == "__main__":
               "These are not hotwheels. Ballers from my hometown doing their thing!"]
 
     analyzer = Analyzer('SanathKumarBS', tweets)
-    analyzer.build_body()
+    analyzer.Analyze()
 
     # print(body)
 
